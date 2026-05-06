@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Sistema de Asistencia</title>
+</head>
+
+<body>
+
+    <h1>Alumnos Presentes</h1>
+
+    <ul id="lista"></ul>
+
+    <script>
+
+        async function cargarPresentes() {
+
+            const respuesta =
+                await fetch('http://localhost:3000/presentes');
+
+            const data =
+                await respuesta.json();
+
+            const lista =
+                document.getElementById('lista');
+
+            lista.innerHTML = "";
+
+            for (let id in data) {
+
+                const alumno = data[id];
+
+                const item =
+                    document.createElement('li');
+
+                item.textContent =
+                    alumno.nombre + " - " + alumno.hora;
+
+                lista.appendChild(item);
+            }
+        }
+
+        cargarPresentes();
+
+        setInterval(cargarPresentes, 2000);
+
+    </script>
+
+</body>
+
+</html>
