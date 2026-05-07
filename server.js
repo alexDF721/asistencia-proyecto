@@ -1,59 +1,117 @@
-const express = require('express');
-const app = express();
 
-app.use(express.json());
-app.use(express.static(__dirname));
-
-let presentes = {};
-
+// ==========================
+// BASE DE DATOS DE ALUMNOS
+// ==========================
 const alumnos = {
-    "0001": "Alex Fumaneri",
-    "0002": "Ferrari Francisco",
-    "0003": "Santino Robles",
-    "0004": "Tobias Moreira"
+    "0001": {
+        nombre: "Alex Fumaneri",
+        curso: "2°5 - Turno Mañana"
+    },
+
+    "0002": {
+        nombre: "Ferrari Francisco",
+        curso: "1°3"
+    },
+
+    "0003": {
+        nombre: "Santino Robles",
+        curso: "2°5 - Turno Mañana"
+    },
+
+    "0004": {
+        nombre: "Tobias Moreira",
+        curso: "6°2"
+    }
 };
 
-app.post('/scan', (req, res) => {
 
-    const { id } = req.body;
+// ==========================
+// REGISTRO DE ASISTENCIAS
+// ==========================
+let asistencias = [];
 
-    if (alumnos[id]) {
 
-        presentes[id] = {
-            nombre: alumnos[id],
-            hora: new Date().toLocaleTimeString()
-        };
+// ==========================
+// FUNCION PARA ESCANEAR
+// ==========================
+function registrarAsistencia(codigo) {
 
-        console.log(alumnos[id] + " presente");
-
-        // ⏱ contador individual de 61 segundos
-        setTimeout(() => {
-
-            delete presentes[id];
-
-            console.log(alumnos[id] + " eliminado automáticamente");
-
-        }, 61000);
-
-        res.json({ ok: true });
-
-    } else {
-
-        res.json({ ok: false });
-
+    // Verifica si existe el alumno
+    if (!alumnos[codigo]) {
+        console.log("Alumno no encontrado");
+        return;
     }
-});
 
-app.get('/presentes', (req, res) => {
+    const alumno = alumnos[codigo];
 
-    res.json(presentes);
+    // Fecha y hora actual
+    const ahora = new Date();
 
-});
+    const fecha = ahora.toLocaleDateString();
+    const hora = ahora.toLocaleTimeString();
 
-const PORT = process.env.PORT || 3000;
+    // Guarda la asistencia
+    asistencias.push({
+        codigo: codigo,
+        nombre: alumno.nombre,
+        curso: alumno.curso,
+        fecha: fecha,
+        hora: hora,
+        estado: "Presente"
+    });
 
-app.listen(PORT, () => {
+    console.log("Asistencia registrada:");
+    console.log(`${alumno.nombre} - ${alumno.curso}`);
+}
 
-    console.log(`Servidor corriendo en puerto ${PORT}`);
 
-});
+// ==========================
+// FUNCION PARA VER LISTA
+// ==========================
+function mostrarAsistencias() {
+
+    console.log("===== LISTA DE ASISTENCIAS =====");
+
+    asistencias.forEach((a) => {
+        console.log(`
+Codigo: ${a.codigo}
+Nombre: ${a.nombre}
+Curso: ${a.curso}
+Fecha: ${a.fecha}
+Hora: ${a.hora}
+Estado: ${a.estado}
+        `);
+    });
+}
+
+
+// ==========================
+// FUNCION PARA VER ALUMNOS
+// ==========================
+function mostrarAlumnos() {
+
+    console.log("===== LISTA DE ALUMNOS =====");
+
+    for (let codigo in alumnos) {
+
+        console.log(`
+Codigo: ${codigo}
+Nombre: ${alumnos[codigo].nombre}
+Curso: ${alumnos[codigo].curso}
+        `);
+    }
+}
+
+
+// ==========================
+// EJEMPLOS DE ESCANEO
+// ==========================
+registrarAsistencia("0001");
+registrarAsistencia("0003");
+registrarAsistencia("0004");
+
+
+// ==========================
+// MOSTRAR RESULTADOS
+// ==========================
+mostrarAsistencias();
