@@ -14,9 +14,11 @@ const alumnos = {
 };
 
 app.post('/scan', (req, res) => {
+
     const { id } = req.body;
 
     if (alumnos[id]) {
+
         presentes[id] = {
             nombre: alumnos[id],
             hora: new Date().toLocaleTimeString()
@@ -24,24 +26,34 @@ app.post('/scan', (req, res) => {
 
         console.log(alumnos[id] + " presente");
 
+        // ⏱ contador individual de 61 segundos
+        setTimeout(() => {
+
+            delete presentes[id];
+
+            console.log(alumnos[id] + " eliminado automáticamente");
+
+        }, 61000);
+
         res.json({ ok: true });
+
     } else {
+
         res.json({ ok: false });
+
     }
 });
 
 app.get('/presentes', (req, res) => {
-    res.json(presentes);
-});
 
-// ⏱ BORRADO AUTOMÁTICO (PROTOCOLO)
-setInterval(() => {
-    presentes = {};
-    console.log("Se borró la asistencia (modo prototipo)");
-}, 60000);
+    res.json(presentes);
+
+});
 
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
+
     console.log(`Servidor corriendo en puerto ${PORT}`);
+
 });
