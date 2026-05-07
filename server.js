@@ -42,6 +42,15 @@ app.post("/api/asistencia/:codigo", (req, res) => {
         });
     }
 
+    // Evita duplicados
+    const yaExiste = asistencias.find(a => a.codigo === codigo);
+
+    if (yaExiste) {
+        return res.json({
+            mensaje: "Alumno ya presente"
+        });
+    }
+
     const nuevaAsistencia = {
         codigo: codigo,
         nombre: alumno.nombre,
@@ -51,20 +60,26 @@ app.post("/api/asistencia/:codigo", (req, res) => {
 
     asistencias.push(nuevaAsistencia);
 
+    // Borrado automático después de 61 segundos
+    setTimeout(() => {
+
+        asistencias =
+            asistencias.filter(a => a.codigo !== codigo);
+
+        console.log(`${alumno.nombre} eliminado automáticamente`);
+
+    }, 61000);
+
     res.json({
         mensaje: "Asistencia registrada",
         asistencia: nuevaAsistencia
     });
+
 });
 
 // Ruta para ver asistencias
 app.get("/api/asistencias", (req, res) => {
     res.json(asistencias);
-});
-
-// Ruta principal
-app.get("/", (req, res) => {
-    res.send("Servidor de asistencias funcionando");
 });
 
 const PORT = process.env.PORT || 3000;
