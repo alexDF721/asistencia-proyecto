@@ -10,6 +10,12 @@
         body {
             font-family: Arial;
             transition: 0.3s;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            text-align: center;
         }
 
         .flash {
@@ -20,11 +26,29 @@
             font-size: 22px;
             color: green;
             margin-bottom: 10px;
+            text-align: center;
         }
 
         #contador {
             font-size: 24px;
             margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .curso {
+            background: white;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 5px gray;
+        }
+
+        .curso h2 {
+            margin-top: 0;
+        }
+
+        li {
+            margin-bottom: 8px;
         }
 
     </style>
@@ -41,7 +65,7 @@
         Presentes: 0
     </div>
 
-    <ul id="lista"></ul>
+    <div id="contenedor"></div>
 
     <script>
 
@@ -50,37 +74,71 @@
         async function cargarPresentes() {
 
             const respuesta =
-                await fetch('https://asistencia-proyecto-production.up.railway.app/presentes');
+                await fetch('https://asistencia-proyecto-production.up.railway.app/api/asistencias');
 
             const data =
                 await respuesta.json();
 
-            const lista =
-                document.getElementById('lista');
+            const contenedor =
+                document.getElementById('contenedor');
 
-            lista.innerHTML = "";
+            contenedor.innerHTML = "";
 
-            let cantidad = 0;
-
-            for (let id in data) {
-
-                cantidad++;
-
-                const alumno = data[id];
-
-                const item =
-                    document.createElement('li');
-
-                item.textContent =
-                    alumno.nombre + " - " + alumno.hora;
-
-                lista.appendChild(item);
-            }
+            let cantidad = data.length;
 
             document.getElementById('contador').textContent =
                 "Presentes: " + cantidad;
 
-            // 🟩 EFECTO VERDE
+            // Agrupar por curso
+            const cursos = {};
+
+            data.forEach(alumno => {
+
+                if (!cursos[alumno.curso]) {
+                    cursos[alumno.curso] = [];
+                }
+
+                cursos[alumno.curso].push(alumno);
+
+            });
+
+            // Mostrar cursos
+            for (let curso in cursos) {
+
+                const divCurso =
+                    document.createElement('div');
+
+                divCurso.className = "curso";
+
+                const titulo =
+                    document.createElement('h2');
+
+                titulo.textContent = curso;
+
+                divCurso.appendChild(titulo);
+
+                const lista =
+                    document.createElement('ul');
+
+                cursos[curso].forEach(alumno => {
+
+                    const item =
+                        document.createElement('li');
+
+                    item.textContent =
+                        alumno.nombre + " - " + alumno.fecha;
+
+                    lista.appendChild(item);
+
+                });
+
+                divCurso.appendChild(lista);
+
+                contenedor.appendChild(divCurso);
+
+            }
+
+            // EFECTO VERDE
             if (cantidad > cantidadAnterior) {
 
                 document.body.classList.add("flash");
@@ -96,9 +154,11 @@
                         "";
 
                 }, 2000);
+
             }
 
             cantidadAnterior = cantidad;
+
         }
 
         cargarPresentes();
