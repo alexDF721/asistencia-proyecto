@@ -1,7 +1,10 @@
+const express = require("express");
+const app = express();
 
-// ==========================
-// BASE DE DATOS DE ALUMNOS
-// ==========================
+app.use(express.static("public"));
+app.use(express.json());
+
+// Base de datos de alumnos
 const alumnos = {
     "0001": {
         nombre: "Alex Fumaneri",
@@ -24,94 +27,48 @@ const alumnos = {
     }
 };
 
-
-// ==========================
-// REGISTRO DE ASISTENCIAS
-// ==========================
+// Lista de asistencias
 let asistencias = [];
 
+// Ruta para registrar asistencia
+app.post("/api/asistencia/:codigo", (req, res) => {
 
-// ==========================
-// FUNCION PARA ESCANEAR
-// ==========================
-function registrarAsistencia(codigo) {
-
-    // Verifica si existe el alumno
-    if (!alumnos[codigo]) {
-        console.log("Alumno no encontrado");
-        return;
-    }
-
+    const codigo = req.params.codigo;
     const alumno = alumnos[codigo];
 
-    // Fecha y hora actual
-    const ahora = new Date();
+    if (!alumno) {
+        return res.status(404).json({
+            error: "Alumno no encontrado"
+        });
+    }
 
-    const fecha = ahora.toLocaleDateString();
-    const hora = ahora.toLocaleTimeString();
-
-    // Guarda la asistencia
-    asistencias.push({
+    const nuevaAsistencia = {
         codigo: codigo,
         nombre: alumno.nombre,
         curso: alumno.curso,
-        fecha: fecha,
-        hora: hora,
-        estado: "Presente"
+        fecha: new Date().toLocaleString("es-AR")
+    };
+
+    asistencias.push(nuevaAsistencia);
+
+    res.json({
+        mensaje: "Asistencia registrada",
+        asistencia: nuevaAsistencia
     });
+});
 
-    console.log("Asistencia registrada:");
-    console.log(`${alumno.nombre} - ${alumno.curso}`);
-}
+// Ruta para ver asistencias
+app.get("/api/asistencias", (req, res) => {
+    res.json(asistencias);
+});
 
+// Ruta principal
+app.get("/", (req, res) => {
+    res.send("Servidor de asistencias funcionando");
+});
 
-// ==========================
-// FUNCION PARA VER LISTA
-// ==========================
-function mostrarAsistencias() {
+const PORT = process.env.PORT || 3000;
 
-    console.log("===== LISTA DE ASISTENCIAS =====");
-
-    asistencias.forEach((a) => {
-        console.log(`
-Codigo: ${a.codigo}
-Nombre: ${a.nombre}
-Curso: ${a.curso}
-Fecha: ${a.fecha}
-Hora: ${a.hora}
-Estado: ${a.estado}
-        `);
-    });
-}
-
-
-// ==========================
-// FUNCION PARA VER ALUMNOS
-// ==========================
-function mostrarAlumnos() {
-
-    console.log("===== LISTA DE ALUMNOS =====");
-
-    for (let codigo in alumnos) {
-
-        console.log(`
-Codigo: ${codigo}
-Nombre: ${alumnos[codigo].nombre}
-Curso: ${alumnos[codigo].curso}
-        `);
-    }
-}
-
-
-// ==========================
-// EJEMPLOS DE ESCANEO
-// ==========================
-registrarAsistencia("0001");
-registrarAsistencia("0003");
-registrarAsistencia("0004");
-
-
-// ==========================
-// MOSTRAR RESULTADOS
-// ==========================
-mostrarAsistencias();
+app.listen(PORT, () => {
+    console.log(`Servidor iniciado en puerto ${PORT}`);
+});
