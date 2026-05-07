@@ -13,6 +13,7 @@
             font-family: Arial;
             text-align: center;
             margin-top: 30px;
+            background-color: #f5f5f5;
         }
 
         #reader {
@@ -40,24 +41,46 @@
 
     <script>
 
-        function onScanSuccess(decodedText) {
+        let ultimoCodigo = "";
+
+        async function onScanSuccess(decodedText) {
+
+            // Evita escanear el mismo código muchas veces
+            if (decodedText === ultimoCodigo) {
+                return;
+            }
+
+            ultimoCodigo = decodedText;
 
             document.getElementById("estado").textContent =
                 "Escaneado: " + decodedText;
 
-            fetch("https://asistencia-proyecto-production.up.railway.app/scan", {
+            try {
 
-                method: "POST",
+                const respuesta =
+                    await fetch(
+                        "https://asistencia-proyecto-production.up.railway.app/api/asistencia/" + decodedText,
+                        {
+                            method: "POST"
+                        }
+                    );
 
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                const data = await respuesta.json();
 
-                body: JSON.stringify({
-                    id: decodedText
-                })
+                document.getElementById("estado").textContent =
+                    data.mensaje + " ✅";
 
-            });
+            } catch (error) {
+
+                document.getElementById("estado").textContent =
+                    "Error al enviar asistencia ❌";
+
+            }
+
+            // Permite volver a escanear después de 3 segundos
+            setTimeout(() => {
+                ultimoCodigo = "";
+            }, 3000);
 
         }
 
