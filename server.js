@@ -33,18 +33,3 @@ app.post('/scan', (req, res) => {
 app.get('/presentes', (req, res) => {
     res.json(presentes);
 });
-
-setInterval(() => {
-    const ahora = new Date();
-
-    if (ahora.getHours() === 11 && ahora.getMinutes() === 30) {
-        presentes = {};
-        console.log("Se borró la asistencia");
-    }
-}, 60000);
-
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-    console.log(`Servidor corriendo en puerto ${PORT}`);
-});
