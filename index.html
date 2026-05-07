@@ -2,16 +2,50 @@
 <html>
 
 <head>
+
     <title>Sistema de Asistencia</title>
+
+    <style>
+
+        body {
+            font-family: Arial;
+            transition: 0.3s;
+        }
+
+        .flash {
+            background-color: #8cff8c;
+        }
+
+        #mensaje {
+            font-size: 22px;
+            color: green;
+            margin-bottom: 10px;
+        }
+
+        #contador {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+    </style>
+
 </head>
 
 <body>
 
-    <h1>Alumnos Presentes</h1>
+    <h1>Sistema de Asistencia</h1>
+
+    <div id="mensaje"></div>
+
+    <div id="contador">
+        Presentes: 0
+    </div>
 
     <ul id="lista"></ul>
 
     <script>
+
+        let cantidadAnterior = 0;
 
         async function cargarPresentes() {
 
@@ -26,7 +60,11 @@
 
             lista.innerHTML = "";
 
+            let cantidad = 0;
+
             for (let id in data) {
+
+                cantidad++;
 
                 const alumno = data[id];
 
@@ -38,6 +76,29 @@
 
                 lista.appendChild(item);
             }
+
+            document.getElementById('contador').textContent =
+                "Presentes: " + cantidad;
+
+            // 🟩 EFECTO VERDE
+            if (cantidad > cantidadAnterior) {
+
+                document.body.classList.add("flash");
+
+                document.getElementById('mensaje').textContent =
+                    "Alumno registrado correctamente ✅";
+
+                setTimeout(() => {
+
+                    document.body.classList.remove("flash");
+
+                    document.getElementById('mensaje').textContent =
+                        "";
+
+                }, 2000);
+            }
+
+            cantidadAnterior = cantidad;
         }
 
         cargarPresentes();
