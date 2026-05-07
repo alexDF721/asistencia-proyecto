@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Scanner de Asistencia</title>
+
+    <script src="https://unpkg.com/html5-qrcode"></script>
+
+    <style>
+
+        body {
+            font-family: Arial;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        #reader {
+            width: 300px;
+            margin: auto;
+        }
+
+        #estado {
+            margin-top: 20px;
+            font-size: 22px;
+            color: green;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <h1>Escanear Código</h1>
+
+    <div id="reader"></div>
+
+    <div id="estado"></div>
+
+    <script>
+
+        function onScanSuccess(decodedText) {
+
+            document
