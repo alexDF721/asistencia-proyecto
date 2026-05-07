@@ -33,3 +33,15 @@ app.post('/scan', (req, res) => {
 app.get('/presentes', (req, res) => {
     res.json(presentes);
 });
+
+// ⏱ BORRADO AUTOMÁTICO (PROTOCOLO)
+setInterval(() => {
+    presentes = {};
+    console.log("Se borró la asistencia (modo prototipo)");
+}, 60000);
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+    console.log(`Servidor corriendo en puerto ${PORT}`);
+});
