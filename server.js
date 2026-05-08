@@ -4,11 +4,11 @@ const app = express();
 app.use(express.static("public"));
 app.use(express.json());
 
-// Base de datos de alumnos
+// Base de datos de alumnos (MODIFICADA PARA PRUEBA)
 const alumnos = {
     "0001": {
         nombre: "Alex Fumaneri",
-        curso: "2°5 - Turno Mañana"
+        curso: "6°4"
     },
 
     "0002": {
@@ -18,12 +18,12 @@ const alumnos = {
 
     "0003": {
         nombre: "Santino Robles",
-        curso: "2°5 - Turno Mañana"
+        curso: "2°5"
     },
 
     "0004": {
         nombre: "Tobias Moreira",
-        curso: "6°2"
+        curso: "6°4"
     }
 };
 
@@ -60,7 +60,7 @@ app.post("/api/asistencia/:codigo", (req, res) => {
 
     asistencias.push(nuevaAsistencia);
 
-    // Borrado automático después de 61 segundos
+    // ⏱ BORRADO AUTOMÁTICO (61 segundos)
     setTimeout(() => {
 
         asistencias =
