@@ -89,7 +89,7 @@
             document.getElementById('contador').textContent =
                 "Presentes: " + cantidad;
 
-            // Agrupar por curso
+            // 🧠 AGRUPAR POR CURSO
             const cursos = {};
 
             data.forEach(alumno => {
@@ -102,8 +102,11 @@
 
             });
 
-            // Mostrar cursos
-            for (let curso in cursos) {
+            // 🔥 ORDENAR CURSOS (IMPORTANTE)
+            const ordenCursos = Object.keys(cursos).sort();
+
+            // 📦 MOSTRAR CURSOS ORDENADOS
+            ordenCursos.forEach(curso => {
 
                 const divCurso =
                     document.createElement('div');
@@ -136,9 +139,9 @@
 
                 contenedor.appendChild(divCurso);
 
-            }
+            });
 
-            // EFECTO VERDE
+            // ✨ EFECTO VERDE
             if (cantidad > cantidadAnterior) {
 
                 document.body.classList.add("flash");
